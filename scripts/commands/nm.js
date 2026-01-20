@@ -2,7 +2,7 @@ const lockedNames = new Map();
 
 module.exports.config = {
   name: "nm",
-  version: "1.0.0",
+  version: "1.1.0",
   permission: 1,
   credits: "you",
   prefix: true,
@@ -12,7 +12,7 @@ module.exports.config = {
   cooldowns: 5
 };
 
-module.exports.run = async function ({ api, event, args }) {
+module.exports.run = async ({ api, event, args }) => {
   const threadID = event.threadID;
 
   const threadInfo = await api.getThreadInfo(threadID);
@@ -31,21 +31,16 @@ module.exports.run = async function ({ api, event, args }) {
   api.sendMessage(`🔒 Group name locked:\n${name}`, threadID);
 };
 
-module.exports.handleEvent = async function ({ api, event }) {
-  if (event.logMessageType !== "log:thread-name") return;
-
-  const threadID = event.threadID;
-  if (!lockedNames.has(threadID)) return;
-
-  const lockedName = lockedNames.get(threadID);
-
-  if (event.logMessageData?.name === lockedName) return;
-
-  const threadInfo = await api.getThreadInfo(threadID);
-  const changerID = event.author;
-
-  if (threadInfo.adminIDs.some(a => a.id == changerID)) return;
-
-  await api.setTitle(lockedName, threadID);
-  api.sendMessage("🚫 Group name is locked.", threadID);
-};
+/**
+ * Poll every 5 seconds
+ */
+setInterval(async () => {
+  for (const [threadID, lockedName] of lockedNames) {
+    try {
+      const info = await global.client.api.getThreadInfo(threadID);
+      if (info.threadName !== lockedName) {
+        await global.client.api.setTitle(lockedName, threadID);
+      }
+    } catch (e) {}
+  }
+}, 5000);
