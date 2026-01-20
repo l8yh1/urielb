@@ -1,8 +1,10 @@
+const lockedNames = new Map();
+
 module.exports.config = {
   name: "nm",
   version: "1.0.0",
-  permission: 1, // admin only
-  credits: "yourname",
+  permission: 1,
+  credits: "you",
   prefix: true,
   description: "Lock group name",
   category: "admin",
@@ -10,37 +12,26 @@ module.exports.config = {
   cooldowns: 5
 };
 
-const lockedNames = new Map();
-
-module.exports.run = async ({ api, event, args }) => {
+module.exports.run = async function ({ api, event, args }) {
   const threadID = event.threadID;
 
-  // Check admin
   const threadInfo = await api.getThreadInfo(threadID);
   if (!threadInfo.adminIDs.some(a => a.id == event.senderID)) {
     return api.sendMessage("❌ Admins only.", threadID);
   }
 
-  const newName = args.join(" ");
-  if (!newName) {
+  const name = args.join(" ");
+  if (!name) {
     return api.sendMessage("⚠️ Usage: nm [group name]", threadID);
   }
 
-  // Set group name
-  await api.setTitle(newName, threadID);
+  await api.setTitle(name, threadID);
+  lockedNames.set(threadID, name);
 
-  // Save locked name
-  lockedNames.set(threadID, newName);
-
-  api.sendMessage(
-    `🔒 Group name locked:\n"${newName}"`,
-    threadID
-  );
+  api.sendMessage(`🔒 Group name locked:\n${name}`, threadID);
 };
 
-// Detect name change
-module.exports.handleEvent = async ({ api, event }) => {
-  if (!event.logMessageType) return;
+module.exports.handleEvent = async function ({ api, event }) {
   if (event.logMessageType !== "log:thread-name") return;
 
   const threadID = event.threadID;
@@ -48,21 +39,13 @@ module.exports.handleEvent = async ({ api, event }) => {
 
   const lockedName = lockedNames.get(threadID);
 
-  // Ignore if already correct
-  if (event.logMessageData.name === lockedName) return;
+  if (event.logMessageData?.name === lockedName) return;
 
-  // Check who changed it
-  const changerID = event.author;
   const threadInfo = await api.getThreadInfo(threadID);
+  const changerID = event.author;
 
-  const isAdmin = threadInfo.adminIDs.some(a => a.id == changerID);
-  if (isAdmin) return; // admins allowed
+  if (threadInfo.adminIDs.some(a => a.id == changerID)) return;
 
-  // Revert name
   await api.setTitle(lockedName, threadID);
-
-  api.sendMessage(
-    "🚫 Group name is locked. Changes reverted.",
-    threadID
-  );
+  api.sendMessage("🚫 Group name is locked.", threadID);
 };
