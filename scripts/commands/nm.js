@@ -30,9 +30,16 @@ module.exports.onLoad = function () {
 module.exports.run = async function ({ api, event, args }) {
   const threadID = event.threadID;
 
-  const info = await api.getThreadInfo(threadID);
-  if (!info.adminIDs.some(a => a.id == event.senderID)) {
-    return api.sendMessage("❌ Admins only.", threadID);
+  const senderID = event.senderID;
+
+  const botAdmins = [
+    ...(global.config.ADMINBOT || []),
+    ...(global.config.OPERATOR || []),
+    ...(global.config.OWNER || [])
+  ].map(String);
+
+  if (!botAdmins.includes(String(senderID))) {
+    return api.sendMessage("❌ Bot admins only.", event.threadID);
   }
 
   const name = args.join(" ");
