@@ -1,28 +1,40 @@
+
 // Store running intervals globally
 if (!global.angelIntervals) global.angelIntervals = new Map();
 
 module.exports.config = {
   name: "angel",
-  version: "1.0.1",
-  credits: "Gry KJ",
-  description: "Friendly test angel command",
-  category: "admin",
-  usages: "angel",
-  permission: 2,
+  version: "1.0.2",
+  credits: "IMRAN",
+  description: "Sends periodic messages for one hour",
+  category: "utility",
+  usages: "",
+  permission: 0,
   cooldowns: 5
 };
 
-module.exports.onLoad = function() {
-  // Nothing to do on load for now
-};
+module.exports.run = async function({ api, event }) {
+  const { threadID, messageID } = event;
 
-module.exports.run = async function({ api, event, args }) {
-  const threadID = event.threadID;
-  const { senderID } = event;
-
-  // Prevent multiple angels in same thread
   if (global.angelIntervals.has(threadID)) {
-    return api.sendMessage("⚠️ Angel command is already running in this thread.", threadID, event.messageID);
+    return api.sendMessage("⚠️ Angel is already active in this thread.", threadID, messageID);
   }
-  return api.sendMessage("Angel activated.", threadID, event.messageID);
+
+  api.sendMessage("Engine is active", threadID, messageID);
+
+  const startTime = Date.now();
+  const oneHour = 3600000; // 1 hour
+  const intervalTime = 15000; // 15 seconds
+
+  const interval = setInterval(() => {
+    if (Date.now() - startTime >= oneHour) {
+      api.sendMessage("Engine Auto-off", threadID);
+      clearInterval(interval);
+      global.angelIntervals.delete(threadID);
+    } else {
+      api.sendMessage("Hi, how are you doing", threadID);
+    }
+  }, intervalTime);
+
+  global.angelIntervals.set(threadID, interval);
 };
