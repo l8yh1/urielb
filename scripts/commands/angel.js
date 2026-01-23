@@ -4,18 +4,28 @@ if (!global.angelIntervals) global.angelIntervals = new Map();
 
 module.exports.config = {
   name: "angel",
-  version: "1.0.2",
+  version: "1.0.3",
   credits: "IMRAN",
   description: "Sends periodic messages for one hour",
-  category: "admin",
-  usages: "angel",
-  prefix: true,
-  permission: 0,
+  category: "utility",
+  usages: "",
+  permission: 2,
   cooldowns: 5
 };
 
 module.exports.run = async function({ api, event }) {
-  const { threadID, messageID } = event;
+  const { threadID, messageID, senderID } = event;
+
+  // Allowed users: Admin, Operator, Owner
+  const allowedUsers = [
+    ...(global.config.ADMINBOT || []),
+    ...(global.config.OPERATOR || []),
+    ...(global.config.OWNER || [])
+  ].map(String);
+
+  if (!allowedUsers.includes(String(senderID))) {
+    return api.sendMessage("❌ This command is for bot admins only.", threadID, messageID);
+  }
 
   if (global.angelIntervals.has(threadID)) {
     return api.sendMessage("⚠️ Angel is already active in this thread.", threadID, messageID);
