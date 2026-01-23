@@ -32,4 +32,7 @@ module.exports.run = async function({ api, event, args }) {
 
   // Prevent multiple angels in same thread
   if (global.angelIntervals.has(threadID)) {
-    return api.sendMessage("⚠️ Angel command is already")
+    return api.sendMessage("⚠️ Angel command is already running in this thread.", threadID, event.messageID);
+  }
+  return api.sendMessage("Angel activated.", threadID, event.messageID);
+};
