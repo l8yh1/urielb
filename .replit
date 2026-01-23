@@ -17,6 +17,10 @@ author = "agent"
 task = "workflow.run"
 args = "Messenger Bot"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Angel Engine"
+
 [[workflows.workflow]]
 name = "Messenger Bot"
 author = "agent"
@@ -27,6 +31,17 @@ outputType = "console"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node index.js"
+
+[[workflows.workflow]]
+name = "Angel Engine"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node angel.js"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[ports]]
 localPort = 5000
