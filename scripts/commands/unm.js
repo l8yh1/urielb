@@ -29,7 +29,7 @@ module.exports.run = async function ({ api, event }) {
   }
 
   // Check lock
-  if (!global.nameLocks || !global.nameLocks.has(threadID)) {
+  if (!global.nameLocks.has(threadID)) {
     return api.sendMessage("ℹ️ Group name is not locked.", threadID);
   }
 
