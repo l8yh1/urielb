@@ -1,4 +1,6 @@
-const lockedNames = new Map();
+// Use global.nameLocks to share data between commands
+if (!global.nameLocks) global.nameLocks = new Map();
+const lockedNames = global.nameLocks;
 
 module.exports.config = {
   name: "nm",
