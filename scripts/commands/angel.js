@@ -3,11 +3,12 @@ if (!global.angelIntervals) global.angelIntervals = new Map();
 
 module.exports.config = {
   name: "angel",
-  version: "1.0.0",
+  version: "1.0.1",
   credits: "Gry KJ",
   description: "Friendly test angel command",
   category: "admin",
   usages: "angel",
+  permission: 2,
   cooldowns: 5
 };
 
@@ -17,18 +18,7 @@ module.exports.onLoad = function() {
 
 module.exports.run = async function({ api, event, args }) {
   const threadID = event.threadID;
-  const senderID = String(event.senderID);
-
-  // Allowed users: admin, operator, owner
-  const allowedUsers = [
-    ...(global.config.ADMINBOT || []),
-    ...(global.config.OPERATOR || []),
-    ...(global.config.OWNER || [])
-  ].map(String);
-
-  if (!allowedUsers.includes(senderID)) {
-    return api.sendMessage("❌ This command is for bot admins only.", threadID, event.messageID);
-  }
+  const { senderID } = event;
 
   // Prevent multiple angels in same thread
   if (global.angelIntervals.has(threadID)) {
