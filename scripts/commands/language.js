@@ -34,7 +34,13 @@ module.exports.run = async ({ api, event, args, getText }) => {
     const configPath = path.join(__dirname, '../../Config.json');
     global.config.language = lang;
     fs.writeFileSync(configPath, JSON.stringify(global.config, null, 2));
-    return api.sendMessage(`Language has been set to ${languages[lang]}`, threadID, messageID);
+    
+    // Force reload language in system if possible
+    if (global.getText) {
+        // Some systems need a reload trigger
+    }
+    
+    return api.sendMessage(`Language has been set to ${languages[lang]}. Please restart the bot if changes don't apply immediately.`, threadID, messageID);
   } else {
     return api.sendMessage("Unsupported language. Available: vi, en, ar, bd, bs, tl", threadID, messageID);
   }
