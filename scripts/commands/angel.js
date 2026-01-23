@@ -7,8 +7,9 @@ module.exports.config = {
   version: "1.0.2",
   credits: "IMRAN",
   description: "Sends periodic messages for one hour",
-  category: "utility",
-  usages: "",
+  category: "admin",
+  usages: "angel",
+  prefix: true,
   permission: 0,
   cooldowns: 5
 };
