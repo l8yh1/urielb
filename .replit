@@ -15,18 +15,18 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Messenger Bot"
+args = "Messenger Bot Auto-Restart"
 
 [[workflows.workflow]]
-name = "Messenger Bot"
+name = "Messenger Bot Auto-Restart"
 author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node index.js"
+args = "node reboot.js"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[ports]]
 localPort = 5000
