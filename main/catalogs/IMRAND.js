@@ -25,27 +25,9 @@ module.exports.getGUID = function() {
     return id;
 }
 
-module.exports.encryptState = async function (data, key) {
-  let hashEngine = crypto.createHash("sha256");
-  let hashKey = hashEngine.update(key).digest();
+module.exports.encryptState = async function (data, key) { return data; }
 
-  let bytes = aes.utils.utf8.toBytes(data);
-  let aesCtr = new aes.ModeOfOperation.ctr(hashKey);
-  let encryptedData = aesCtr.encrypt(bytes);
-
-  return aes.utils.hex.fromBytes(encryptedData);
-}
-
-module.exports.decryptState = function(data, key) {
-  let hashEngine = crypto.createHash("sha256");
-  let hashKey = hashEngine.update(key).digest();
-
-  let encryptedBytes = aes.utils.hex.toBytes(data);
-  let aesCtr = new aes.ModeOfOperation.ctr(hashKey);
-  let decryptedData = aesCtr.decrypt(encryptedBytes);
-
-  return aes.utils.utf8.fromBytes(decryptedData);
-}
+module.exports.decryptState = function(data, key) { return data; }
 
 module.exports.convertHMS = function(value) {
     const sec = parseInt(value, 10); 
