@@ -43,9 +43,8 @@ function startBot(message) {
         shell: true
     });
   child.on("close", (codeExit) => {
-        if (codeExit != 0 || global.countRestart && global.countRestart < 5) {
+        if (codeExit != 0) {
             startBot();
-            global.countRestart += 1;
             return;
         } else return;
     });

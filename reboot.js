@@ -16,15 +16,16 @@ function start() {
     });
 
     child.on('close', (code) => {
-        // code 0: normal exit, code null/other: crash
-        const delay = (code === 0 || code === null) ? 2000 : 5000;
+        // If it exited with code 0 or 1 (usually intentional restart), use short delay
+        // If it crashed or was killed, use 10s delay to stabilize
+        const delay = (code === 0 || code === 1) ? 2000 : 10000;
         console.log(`Bot process exited with code ${code}. Restarting in ${delay/1000}s...`);
         setTimeout(start, delay);
     });
 
     child.on('error', (err) => {
         console.error('Failed to start bot:', err);
-        setTimeout(start, 10000); 
+        setTimeout(start, 20000); 
     });
 
     // Cleanup child process on script exit
